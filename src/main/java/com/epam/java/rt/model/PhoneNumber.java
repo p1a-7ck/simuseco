@@ -8,18 +8,20 @@ import org.slf4j.LoggerFactory;
  */
 public final class PhoneNumber {
     private final static Logger PHONE_NUMBER_LOG = LoggerFactory.getLogger(PhoneNumber.class);
-    public String delimiter = "-";
+    public String delimiter = "";
     public final int countryCode;
     public final int defCode;
     public final int regionCode;
     public final int number;
     int[] temporaryData = null;
 
-    public PhoneNumber(int countryCode, int defCode, int regionCode, int number) {
+    public PhoneNumber(int countryCode, int defCode, int regionCode, int number, String delimiter) {
         this.countryCode = countryCode;
         this.defCode = defCode;
         this.regionCode = regionCode;
         this.number = number;
+        this.delimiter = delimiter;
+        PHONE_NUMBER_LOG.info("Phone number constructed '{}'", this.getCombined());
     }
 
     private void initTemporaryData() {
@@ -86,8 +88,8 @@ public final class PhoneNumber {
         PhoneNumber newPhoneNumber = new PhoneNumber(this.temporaryData[0],
                 this.temporaryData[1],
                 this.temporaryData[2],
-                this.temporaryData[3]);
-        newPhoneNumber.setDelimiter(this.delimiter);
+                this.temporaryData[3],
+                this.delimiter);
         PHONE_NUMBER_LOG.info("Phone number copy set to '{}'", newPhoneNumber.getCombined());
         return newPhoneNumber;
     }
@@ -119,14 +121,15 @@ public final class PhoneNumber {
                 newPhoneNumber = new PhoneNumber(Integer.valueOf(phoneNumberParts[0]),
                         Integer.valueOf(phoneNumberParts[1]),
                         -1,
-                        Integer.valueOf(phoneNumberParts[2] + phoneNumberParts[3]));
+                        Integer.valueOf(phoneNumberParts[2] + phoneNumberParts[3]),
+                        delimiter);
             } else {
                 newPhoneNumber = new PhoneNumber(Integer.valueOf(phoneNumberParts[0]),
                         Integer.valueOf(phoneNumberParts[1]),
                         Integer.valueOf(phoneNumberParts[2]),
-                        Integer.valueOf(phoneNumberParts[3]));
+                        Integer.valueOf(phoneNumberParts[3]),
+                        delimiter);
             }
-            newPhoneNumber.setDelimiter(delimiter);
             PHONE_NUMBER_LOG.info("New phone number set to '{}'", newPhoneNumber.getCombined());
             return newPhoneNumber;
         } catch (NumberFormatException exc) {
